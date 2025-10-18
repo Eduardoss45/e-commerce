@@ -1,0 +1,125 @@
+@use '../1-base/base';
+@use 'layouts-mixins';
+
+.header {
+  background-color: base.$bg-color;
+
+  &-top {
+    background-color: base.$secondary-bg-color;
+    color: base.$light-color;
+
+    @include base.mobile {
+      display: none;
+    }
+
+    &-container {
+      @include layouts-mixins.center-content;
+      padding: 0.8rem 0;
+
+      span {
+        margin-right: 1rem;
+      }
+
+      i {
+        margin-right: 0.3rem;
+      }
+
+      a {
+        color: base.$light-color;
+      }
+    }
+  }
+}
+
+.main-header {
+  &-container {
+    @include layouts-mixins.center-content;
+    padding: 1.3rem 0;
+
+    @include base.mobile {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    a,
+    span,
+    i {
+      color: #fff;
+    }
+
+    #brand {
+      font-weight: 900;
+      font-size: 3rem;
+
+      i {
+        color: base.$primary-color;
+        font-size: 2rem;
+      }
+    }
+
+    #search-form {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 45%;
+
+      @include base.mobile {
+        width: 100%;
+        margin: 2rem 0;
+      }
+
+      input {
+        height: 40px;
+      }
+
+      #search {
+        @include layouts-mixins.rounded-input;
+        width: 60%;
+      }
+    }
+
+    .header-actions-menu {
+      display: flex;
+      align-items: center;
+
+      .wishlist-container,
+      .header-cart-container {
+        @include layouts-mixins.header-icon;
+
+        @include base.mobile {
+          margin: 1rem;
+        }
+      }
+    }
+  }
+}
+
+.header-bottom {
+  background-color: base.$light-color;
+  border-bottom: 2px solid base.$section-bg-color;
+  border-top: 3px solid base.$primary-color;
+
+  ul {
+    @include layouts-mixins.center-content;
+    justify-content: left;
+    padding: 1rem 0;
+
+    @include base.mobile {
+      display: none;
+    }
+
+    li {
+      margin-right: 1.3rem;
+    }
+
+    a {
+      color: base.$link-color;
+      border-bottom: 2px solid transparent;
+
+      &:hover {
+        color: base.$primary-color;
+        border-color: base.$primary-color;
+      }
+    }
+  }
+}

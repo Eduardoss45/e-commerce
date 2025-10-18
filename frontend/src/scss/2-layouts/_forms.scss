@@ -1,0 +1,72 @@
+@use '../1-base/base';
+
+.register-form {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 2px 4px 1px #00000020;
+    border-radius: 10px;
+    padding: 2rem;
+    min-width: 300px;
+    min-height: auto;
+    background-color: base.$bg-color;
+
+    h2 {
+      text-align: center;
+      font-size: 2rem;
+      padding-bottom: 2rem;
+      color: base.$light-color;
+    }
+
+    label {
+      font-weight: 300;
+      font-size: 1.25rem;
+      color: base.$light-color;
+    }
+
+    input {
+      background-color: transparent;
+      border-bottom: 1px solid base.$primary-color;
+      margin-bottom: 2rem;
+      color: base.$light-color;
+      padding: 1rem 0 0 0;
+
+      &::placeholder {
+        color: base.$light-color;
+      }
+    }
+
+    button {
+      background-color: base.$primary-color;
+      font-weight: bold;
+      color: base.$light-color;
+      border: none;
+      border-radius: 20px;
+      padding: 0.75rem;
+    }
+
+    p {
+      color: base.$light-color;
+      text-align: center;
+      padding-top: 1rem;
+
+      span {
+        color: base.$gray-text-color;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+
+    a {
+      color: base.$gray-text-color;
+      text-align: center;
+      text-decoration: underline;
+    }
+  }
+}

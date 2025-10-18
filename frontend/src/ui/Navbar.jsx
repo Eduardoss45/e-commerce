@@ -1,4 +1,7 @@
+import { Link, useLocation } from 'react-router-dom';
+
 const Navbar = () => {
+  const location = useLocation();
   return (
     <>
       <header className="header">
@@ -20,7 +23,12 @@ const Navbar = () => {
                 <i className="fas fa-dollar sign"></i> <a href="#">BRL</a>
               </span>
               <span>
-                <i className="fas fa-user"></i> <a href="#">Minha Conta</a>
+                <i className="fas fa-user"></i> <Link to="/user-account">Minha Conta</Link>
+                {location.pathname !== '/register' && (
+                  <>
+                    <i className="fas fa-user"></i> <Link to="/register">Registre-se</Link>
+                  </>
+                )}
               </span>
             </div>
           </div>

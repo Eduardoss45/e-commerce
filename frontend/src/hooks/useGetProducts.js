@@ -12,8 +12,7 @@ export function useGetProducts({ limit = 28 }) {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${url}/?limit=${limit}`); // ! o backend não tem suporte para isto, deve ser ajustado
-        console.log(response.data)
+        const response = await axios.get(`${url}/?limit=${limit}`);
         if (!cancel) setData(response.data);
       } catch (error) {
         if (!cancel) setError(error);

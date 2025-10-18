@@ -4,7 +4,6 @@ import Promotions from '../ui/Promotions';
 import Banners from '../ui/Banners';
 import NewProductsCard from '../ui/components/NewProductsCard';
 import BestSellingProducts from '../ui/components/BestSellingProducts';
-import ButtonToolbar from '../ui/components/ButtonToolbar';
 
 const Home = () => {
   const { data, error, loading } = useGetProducts({});
@@ -67,7 +66,6 @@ const Home = () => {
             </div>
           );
         })}
-        <ButtonToolbar />
       </div>
     </>
   );

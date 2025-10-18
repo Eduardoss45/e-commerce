@@ -1,8 +1,6 @@
-// * imports
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 
-// * generate code
 function generateCode() {
   const random = crypto.randomBytes(10).toString('base64');
   const code = random
@@ -15,5 +13,4 @@ function generateCode() {
   return { code, codeHash, codeExpiresAt, codeAttempts };
 }
 
-// * export
 module.exports = generateCode;

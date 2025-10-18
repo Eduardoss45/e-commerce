@@ -1,0 +1,23 @@
+@use 'variables';
+@use 'mixins';
+
+.container {
+  width: 100%;
+  padding-left: variables.$padding;
+  padding-right: variables.$padding;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include mixins.respond-to(sm) {
+    max-width: 540px;
+  }
+  @include mixins.respond-to(md) {
+    max-width: 720px;
+  }
+  @include mixins.respond-to(lg) {
+    max-width: 960px;
+  }
+  @include mixins.respond-to(xl) {
+    max-width: variables.$container-width;
+  }
+}
