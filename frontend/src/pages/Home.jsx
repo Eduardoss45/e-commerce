@@ -1,5 +1,4 @@
 import { useGetProducts } from '../hooks/useGetProducts';
-
 import Promotions from '../ui/Promotions';
 import Banners from '../ui/Banners';
 import NewProductsCard from '../ui/components/NewProductsCard';
@@ -31,12 +30,11 @@ const Home = () => {
         <div className="products-grid-container">
           {data.products.slice(4, 8).map(product => (
             <NewProductsCard
-              key={product.id}
               id={product.id}
-              thumbnail={product.thumbnail}
+              thumbnail={product.images?.[0] || product.thumbnail || '/placeholder.png'}
               description={product.description}
               category={product.category}
-              name={product.name}
+              name={product.name || product.title}
               price={product.price}
               reviews={product.reviews}
             />
@@ -53,12 +51,11 @@ const Home = () => {
             <div className="products-grid-container" key={blockIndex}>
               {data.products.slice(start, end).map(product => (
                 <BestSellingProducts
-                  key={product.id}
                   id={product.id}
                   thumbnail={product.thumbnail}
                   description={product.description}
                   category={product.category}
-                  name={product.name}
+                  name={product.name || product.title}
                   price={product.price}
                   reviews={product.reviews}
                 />

@@ -11,6 +11,7 @@ const {
   forgotPassword,
   resetPassword,
 } = require('../controllers/authController');
+const { calcCorreios } = require('../controllers/productsController');
 const { userInfo, userAddItemCart } = require('../controllers/userController');
 
 router.post('/auth/register', checkEmptyBody, registerController);
@@ -21,6 +22,7 @@ router.post('/auth/refresh', refreshToken);
 router.post('/password-reset-request', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 router.post('/auth/logout', logoutController);
+router.get('/frete', calcCorreios);
 // ! Trabalhar as rotas abaixo
 router.get('/user/:id', checkToken, userInfo);
 router.post('/user/:id/add-item-cart', checkToken, checkEmptyBody, userAddItemCart);

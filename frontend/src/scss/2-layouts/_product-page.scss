@@ -1,0 +1,126 @@
+.product-page {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  flex-wrap: wrap;
+
+  .product-gallery {
+    flex: 1 1 400px;
+    text-align: center;
+
+    .product-main-image {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-thumbnails {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+
+      img {
+        width: 60px;
+        height: 60px;
+        border-radius: 6px;
+        cursor: pointer;
+        opacity: 0.6;
+        transition: 0.2s ease;
+
+        &.active,
+        &:hover {
+          opacity: 1;
+          transform: scale(1.05);
+          box-shadow: 0 0 5px #999;
+        }
+      }
+    }
+  }
+
+  .product-details {
+    flex: 1 1 400px;
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .brand {
+      color: #555;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    .price {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+
+      .current-price {
+        font-size: 1.8rem;
+        color: #2e7d32;
+        font-weight: bold;
+      }
+
+      .old-price {
+        text-decoration: line-through;
+        color: #999;
+      }
+    }
+
+    .description {
+      margin: 1rem 0;
+      line-height: 1.5;
+    }
+
+    .buy-btn {
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      padding: 0.8rem 1.6rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.2s;
+
+      &:hover {
+        background: #256327;
+      }
+    }
+
+    .extra-info {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: #444;
+
+      p {
+        margin: 0.3rem 0;
+      }
+    }
+
+    .reviews {
+      margin-top: 2rem;
+
+      h3 {
+        margin-bottom: 0.8rem;
+      }
+
+      .review {
+        border-top: 1px solid #ddd;
+        padding-top: 0.8rem;
+        margin-top: 0.8rem;
+
+        strong {
+          color: #222;
+        }
+
+        p {
+          margin: 0.2rem 0;
+          color: #555;
+        }
+      }
+    }
+  }
+}

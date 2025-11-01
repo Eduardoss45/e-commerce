@@ -7,8 +7,10 @@ import Home from './pages/Home.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
 import CheckCode from './pages/CheckCode.jsx';
-import Dashboard from './pages/Dashboard.jsx'; // exemplo
+import Dashboard from './pages/Dashboard.jsx';
+import ProductPage from './pages/ProductPage.jsx';
 import { ProtectedRoute } from './ui/components/ProtectedRoute.jsx';
+import CalculateShipping from './ui/components/CalculateShipping.jsx';
 
 import './scss/app.scss';
 
@@ -17,13 +19,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}>
-          {/* Páginas públicas */}
           <Route index element={<Home />} />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="verify" element={<CheckCode />} />
-
-          {/* Rotas protegidas (exemplo) */}
+          <Route path="shipping" element={<CalculateShipping />} />
+          <Route path="product/:id" element={<ProductPage />} />
           <Route element={<ProtectedRoute requireVerification={true} />}>
             <Route path="dashboard" element={<Dashboard />} />
           </Route>
