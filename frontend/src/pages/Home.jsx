@@ -1,11 +1,11 @@
-import { useGetProducts } from '../hooks/useGetProducts';
+import { useManager } from '../hooks/useManager';
 import Promotions from '../ui/Promotions';
 import Banners from '../ui/Banners';
 import NewProductsCard from '../ui/components/NewProductsCard';
 import BestSellingProducts from '../ui/components/BestSellingProducts';
 
 const Home = () => {
-  const { data, error, loading } = useGetProducts({});
+  const { data, error, loading } = useManager({});
   const productsPerBlock = 4;
   const numberOfBlocks = 5;
   if (loading)

@@ -1,3 +1,6 @@
+@use '../1-base/base';
+@use 'layouts-mixins';
+
 .product-page {
   display: flex;
   gap: 2rem;
@@ -60,7 +63,7 @@
 
       .current-price {
         font-size: 1.8rem;
-        color: #2e7d32;
+        color: base.$primary-color;
         font-weight: bold;
       }
 
@@ -75,18 +78,36 @@
       line-height: 1.5;
     }
 
-    .buy-btn {
-      background: #2e7d32;
-      color: #fff;
-      border: none;
-      padding: 0.8rem 1.6rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: 0.2s;
+    .btn-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
 
-      &:hover {
-        background: #256327;
+      .buy-btn,
+      .frete-btn {
+        width: 100%;
+        background: base.$primary-color;
+        color: #fff;
+        border: none;
+        padding: 0.8rem 1.6rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: 0.2s;
+
+        .fa-shopping-cart {
+          color: white;
+          margin-right: 10px;
+        }
+
+        .fa-shipping-fast {
+          color: white;
+          margin-right: 10px;
+        }
+
+        &:hover {
+          opacity: 0.8;
+        }
       }
     }
 

@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useGetProducts } from '../hooks/useGetProducts'; // se você já tem esse hook
-import calcAverageRating from '../utils/calcAverageRating';
+import { useManager } from '../hooks/useManager'; // se você já tem esse hook
 
 const ProductPage = () => {
   const { id } = useParams(); // pega o ID da URL
-  const { data, loading, error } = useGetProducts({}); // pega todos os produtos
+  const { data, loading, error } = useManager({}); // pega todos os produtos
   const [product, setProduct] = useState(null);
   const [currentImage, setCurrentImage] = useState(0);
 
@@ -69,7 +68,15 @@ const ProductPage = () => {
 
         <p className="description">{description}</p>
 
-        <button className="buy-btn">🛒 Adicionar ao carrinho</button>
+        <div className="btn-container">
+          <button className="frete-btn">
+            <i className="fas fa-shipping-fast"></i>Calcular frete
+          </button>
+          <button className="buy-btn">
+            {' '}
+            <i className="fas fa-shopping-cart"></i>Adicionar ao carrinho
+          </button>
+        </div>
 
         <div className="extra-info">
           <p>
