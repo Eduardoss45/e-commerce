@@ -4,9 +4,16 @@ import Footer from './ui/Footer';
 import Newsletter from './ui/Newsletter';
 import { ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAuth } from './hooks/useAuth';
+import { useEffect } from 'react';
 
 function App() {
   const location = useLocation();
+  const { fetchSession } = useAuth();
+
+  useEffect(() => {
+    fetchSession();
+  }, []);
 
   return (
     <>

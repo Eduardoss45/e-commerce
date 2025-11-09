@@ -1,0 +1,89 @@
+@use '../1-base/variables';
+@use '../1-base/base-mixins';
+
+.client-dashboard {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+
+  h2 {
+    color: variables.$primary-color;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+  }
+
+  .empty-cart {
+    color: variables.$gray-text-color;
+    font-size: 1.1rem;
+    margin-top: 2rem;
+  }
+
+  .cart-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .cart-card {
+    border: 1px solid variables.$gray-text-color;
+    border-radius: 10px;
+    padding: 1rem;
+    width: 22%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: 0.3s;
+    background-color: variables.$light-color;
+
+    @include base-mixins.mobile {
+      width: 90%;
+    }
+
+    &:hover {
+      border-color: variables.$primary-color;
+      transform: translateY(-5px);
+    }
+
+    img {
+      width: 100%;
+      max-height: 180px;
+      object-fit: contain;
+      margin-bottom: 1rem;
+    }
+
+    .cart-info {
+      text-align: center;
+
+      h3 {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+
+      .price {
+        color: variables.$primary-color;
+        font-weight: bold;
+        margin-bottom: 0.3rem;
+      }
+
+      .quantity {
+        color: variables.$gray-text-color;
+      }
+    }
+
+    .remove-btn {
+      margin-top: 1rem;
+      background-color: red;
+      border-color: red;
+
+      &:hover {
+        background-color: variables.$light-color;
+        color: red;
+      }
+    }
+  }
+}

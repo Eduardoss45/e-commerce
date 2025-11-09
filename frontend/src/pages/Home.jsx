@@ -30,6 +30,7 @@ const Home = () => {
         <div className="products-grid-container">
           {data.products.slice(4, 8).map(product => (
             <NewProductsCard
+              key={product.id}
               id={product.id}
               thumbnail={product.images?.[0] || product.thumbnail || '/placeholder.png'}
               description={product.description}
@@ -51,6 +52,7 @@ const Home = () => {
             <div className="products-grid-container" key={blockIndex}>
               {data.products.slice(start, end).map(product => (
                 <BestSellingProducts
+                  key={product.id}
                   id={product.id}
                   thumbnail={product.thumbnail}
                   description={product.description}

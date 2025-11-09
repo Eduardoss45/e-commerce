@@ -74,26 +74,35 @@ async function loginController(req, res) {
       id: user._id,
       email: user.email,
     };
-    const token = jwt.sign(payload, access_secret, { expiresIn: '15m' });
-    const refreshToken = jwt.sign(payload, refresh_secret, { expiresIn: '7d' });
+    const accessToken = jwt.sign(payload, access_secret, { expiresIn: '15m' });
+    const refreshToken = jwt.sign(payload, refresh_secret, { expiresIn: '30d' });
     const refreshHash = bcrypt.hashSync(refreshToken, 12);
     user.refreshTokens.push(refreshHash);
     await user.save();
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.MODE === 'production',
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000,
+      path: '/',
+    });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.MODE === 'production',
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/auth/refresh',
     });
 
     res.status(200).json({
       msg: 'Login realizado com sucesso.',
       user: {
-        token,
         verified: user.verified,
         email: user.email,
         cart: user.cart,
+        _id: user._id,
       },
     });
   } catch (error) {
@@ -168,7 +177,7 @@ async function refreshToken(req, res) {
 
     const payload = { id: user._id, email: user.email };
 
-    const newRefreshToken = jwt.sign(payload, refresh_secret, { expiresIn: '7d' });
+    const newRefreshToken = jwt.sign(payload, refresh_secret, { expiresIn: '30d' });
     const refreshHash = bcrypt.hashSync(newRefreshToken, 12);
     user.refreshTokens.push(refreshHash);
     await user.save();
@@ -177,7 +186,8 @@ async function refreshToken(req, res) {
       httpOnly: true,
       secure: process.env.MODE === 'production',
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/auth/refresh',
     });
 
     const access_secret = process.env.ACCESS_SECRET;
@@ -185,7 +195,15 @@ async function refreshToken(req, res) {
       expiresIn: '15m',
     });
 
-    return res.status(200).json({ token });
+    res.cookie('accessToken', token, {
+      httpOnly: true,
+      secure: process.env.MODE === 'production',
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000,
+      path: '/',
+    });
+
+    return res.status(200).json({ msg: 'Token atualizado com sucesso.' });
   } catch (error) {
     return res.status(403).json({ msg: 'Token de atualização inválido ou expirado.' });
   }
@@ -257,10 +275,17 @@ async function logoutController(req, res) {
   user.refreshTokens = user.refreshTokens.filter(rt => !bcrypt.compareSync(refreshToken, rt));
   await user.save();
 
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: process.env.MODE === 'production',
+    path: '/',
+  });
   res.clearCookie('refreshToken', {
     httpOnly: true,
     sameSite: 'strict',
     secure: process.env.MODE === 'production',
+    path: '/auth/refresh',
   });
   res.sendStatus(204);
 }
@@ -341,6 +366,17 @@ async function resetPassword(req, res) {
   return res.status(200).json({ msg: 'Senha redefinida com sucesso.' });
 }
 
+async function getMe(req, res) {
+  try {
+    const user = await User.findById(req.user.id, '-password -__v').populate('cart.productId');
+    if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' });
+    res.status(200).json({ user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Erro interno do servidor' });
+  }
+}
+
 module.exports = {
   registerController,
   loginController,
@@ -350,4 +386,5 @@ module.exports = {
   logoutController,
   forgotPassword,
   resetPassword,
+  getMe,
 };

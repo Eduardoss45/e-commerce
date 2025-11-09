@@ -7,6 +7,12 @@
   justify-content: space-between;
 }
 
+@mixin top-menu {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
 @mixin header-icon {
   position: relative;
   display: flex;

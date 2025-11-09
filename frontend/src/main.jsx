@@ -8,6 +8,7 @@ import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
 import CheckCode from './pages/CheckCode.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import CartPage from './pages/CartPage.jsx';
 import ProductPage from './pages/ProductPage.jsx';
 import { ProtectedRoute } from './ui/components/ProtectedRoute.jsx';
 import CalculateShipping from './ui/components/CalculateShipping.jsx';
@@ -25,6 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="verify" element={<CheckCode />} />
           <Route path="shipping" element={<CalculateShipping />} />
           <Route path="product/:id" element={<ProductPage />} />
+          <Route path="cart" element={<CartPage />} />
           <Route element={<ProtectedRoute requireVerification={true} />}>
             <Route path="dashboard" element={<Dashboard />} />
           </Route>

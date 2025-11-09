@@ -6,9 +6,10 @@ import api from '../services/api';
 
 export function useAuth() {
   const [loading, setLoading] = useState(false);
-  const { user, token, setAuth, clearAuth } = useAuthStore();
+  const { user, setAuth, clearAuth } = useAuthStore();
   const navigate = useNavigate();
 
+  // 🔹 Registro de novo usuário
   const register = async (name, email, password, confirm_password) => {
     setLoading(true);
     try {
@@ -18,8 +19,8 @@ export function useAuth() {
         password,
         confirm_password,
       });
-      navigate('/login');
       toast.success(res.data.msg);
+      navigate('/login');
     } catch (error) {
       const message = error.response?.data?.msg || error.message;
       toast.error(message);
@@ -28,17 +29,22 @@ export function useAuth() {
     }
   };
 
+  // 🔹 Login (salva apenas o usuário, cookies são automáticos)
   const login = async (email, password) => {
     setLoading(true);
     try {
       const res = await api.post('/auth/login', { email, password });
-      const { user, token } = res.data;
-      setAuth(user, token);
+      const { user } = res.data;
+      console.log(user);
+
+      setAuth(user);
+
       if (!user.verified) {
         navigate('/verify');
       } else {
-        navigate('/dashboard');
+        navigate('/');
       }
+
       toast.success(res.data.msg);
     } catch (error) {
       const message = error.response?.data?.msg || error.message;
@@ -48,13 +54,13 @@ export function useAuth() {
     }
   };
 
+  // 🔹 Verificação de código
   const checkCode = async (code, email) => {
-    console.log(email, code);
     setLoading(true);
     try {
       const res = await api.post('/auth/verify', { code, email });
       const { user } = res.data;
-      setAuth(user, token);
+      setAuth(user);
       navigate('/');
       toast.success(res.data.msg);
     } catch (error) {
@@ -65,6 +71,7 @@ export function useAuth() {
     }
   };
 
+  // 🔹 Reenvio de código
   const resendCode = async email => {
     setLoading(true);
     try {
@@ -78,10 +85,32 @@ export function useAuth() {
     }
   };
 
-  const logout = () => {
-    clearAuth();
-    toast.info('Você saiu da conta.');
+  // 🔹 Logout (encerra sessão e limpa store)
+  const logout = async () => {
+    setLoading(true);
+    try {
+      await api.post('/auth/logout');
+      clearAuth();
+      toast.info('Você saiu da conta.');
+      navigate('/login');
+    } catch (error) {
+      clearAuth(); // 🔸 garante limpeza mesmo se o backend falhar
+      const message = error.response?.data?.msg || error.message;
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return { user, token, loading, register, login, checkCode, resendCode, logout };
+  const fetchSession = async () => {
+    try {
+      const res = await api.get('/auth/me');
+      setAuth(res.data.user);
+    } catch {
+      clearAuth();
+    }
+  };
+
+  // 🔸 Retorna fetchSession também!
+  return { user, loading, register, login, checkCode, resendCode, logout, fetchSession };
 }

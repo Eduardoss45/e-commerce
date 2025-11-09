@@ -1,0 +1,120 @@
+@use '../1-base/variables';
+@use '../1-base/base-mixins';
+
+.cart-page {
+  padding: 2rem;
+  min-height: 80vh;
+
+  .cart-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: variables.$primary-color;
+  }
+
+  .cart-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .cart-card {
+    border: 1px solid variables.$gray-text-color;
+    border-radius: 10px;
+    width: 22%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: 0.3s;
+
+    @include base-mixins.mobile {
+      width: 90%;
+    }
+
+    &:hover {
+      border-color: variables.$primary-color;
+      box-shadow: 0 0 8px rgba(variables.$primary-color, 0.3);
+    }
+
+    .cart-img {
+      width: 100%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
+
+    .cart-info {
+      text-align: center;
+
+      .cart-name {
+        text-transform: uppercase;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .cart-price {
+        color: variables.$primary-color;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .cart-quantity {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.8rem 0;
+
+        .qty-btn {
+          background: none;
+          border: 1px solid variables.$primary-color;
+          color: variables.$primary-color;
+          font-size: 1.2rem;
+          width: 2rem;
+          height: 2rem;
+          border-radius: 5px;
+          cursor: pointer;
+
+          &:hover {
+            background-color: variables.$primary-color;
+            color: variables.$light-color;
+          }
+        }
+
+        span {
+          font-weight: bold;
+          min-width: 20px;
+          display: inline-block;
+          text-align: center;
+        }
+      }
+
+      .cart-total {
+        margin-top: 0.5rem;
+        font-weight: bold;
+      }
+
+      .remove-btn {
+        margin-top: 1rem;
+        border: none;
+        background-color: variables.$primary-color;
+        color: variables.$light-color;
+        padding: 0.6rem 1.2rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+
+        &:hover {
+          background-color: darken(variables.$primary-color, 10%);
+        }
+      }
+    }
+  }
+
+  .cart-empty {
+    text-align: center;
+    margin-top: 5rem;
+    color: variables.$gray-text-color;
+  }
+}

@@ -12,8 +12,7 @@ function checkEmptyBody(req, res, next) {
 }
 
 function checkToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]?.trim();
+  const token = req.cookies.accessToken;
   if (!token) {
     return res.status(401).json({ msg: 'Acesso negado!' });
   }
