@@ -1,0 +1,6 @@
+- Corrigir pagina do carrinho
+- Criar pagina da conta do usuário
+- Alternar o estado de visibilidade da barra de pesquisa e torna-la funcional (mostrar um menu de opções com imagem) e ir para o produto ao clicar nele
+- Resolver erro da integração da api dos correios (substituir por algo)
+- Ajustar o frontend para exibir itens do carrinho e favoritos
+- Verificar o uso de ProtectedRoute

@@ -1,22 +1,37 @@
-import { useCartStore } from '../store/useCartStore';
-import { useManagerProducts } from '../hooks/useManagerProducts';
+import { useEffect, useState } from 'react';
+import { useAppStore } from '../store/useAppStore';
+import axios from 'axios';
 
 const CartPage = () => {
-  const { cart } = useCartStore();
-  const { removeItem, addItem } = useManagerProducts();
+  const { cart, user, addToCart, removeFromCart, fetchUserProducts } = useAppStore();
+  const [products, setProducts] = useState([]);
 
-  console.log(cart);
+  useEffect(() => {
+    const loadCart = async () => {
+      if (!user?._id) return;
 
-  const handleIncrease = async (userId, productId, quantity) => {
-    await addItem(userId, productId, quantity + 1);
+      await fetchUserProducts();
+
+      const productIds = cart.map(i => i.productId);
+      const responses = await Promise.all(
+        productIds.map(id => axios.get(`https://dummyjson.com/products/${id}`))
+      );
+      setProducts(responses.map(r => r.data));
+    };
+
+    loadCart();
+  }, [user?._id]);
+
+  const handleIncrease = async (productId, quantity) => {
+    await addToCart({ productId, quantity: quantity + 1 });
   };
 
-  const handleDecrease = async (userId, productId, quantity) => {
-    if (quantity > 1) await addItem(userId, productId, quantity - 1);
+  const handleDecrease = async (productId, quantity) => {
+    if (quantity > 1) await addToCart({ productId, quantity: quantity - 1 });
   };
 
-  const handleRemove = async (userId, productId) => {
-    await removeItem(userId, productId);
+  const handleRemove = async productId => {
+    await removeFromCart(productId);
   };
 
   if (!cart || cart.length === 0) {
@@ -27,53 +42,40 @@ const CartPage = () => {
     );
   }
 
-  // Exemplo estático de userId (substitua por auth)
-  const userId = 'USER123';
-
   return (
     <div className="cart-page">
       <h2 className="cart-title">Meu Carrinho</h2>
-
       <div className="cart-grid">
         {cart.map(item => {
-          const product = item.product || {};
-          const price = product.price || 0;
-          const total = (price * item.quantity).toFixed(2);
+          const product = products.find(p => String(p.id) === String(item.productId));
+          const total = product ? (product.price * item.quantity).toFixed(2) : '0.00';
 
           return (
             <div className="cart-card" key={item._id}>
-              <img
-                src={product.thumbnail || '/placeholder.png'}
-                alt={product.name}
-                className="cart-img"
-              />
+              {product ? (
+                <>
+                  <img
+                    src={product.thumbnail || '/placeholder.png'}
+                    alt={product.title}
+                    className="cart-img"
+                  />
+                  <div className="cart-info">
+                    <h3>{product.title}</h3>
+                    <p>R$ {product.price}</p>
 
-              <div className="cart-info">
-                <h3 className="cart-name">{product.name}</h3>
-                <p className="cart-price">R$ {price}</p>
+                    <div className="cart-quantity">
+                      <button onClick={() => handleDecrease(product.id, item.quantity)}>−</button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => handleIncrease(product.id, item.quantity)}>+</button>
+                    </div>
 
-                <div className="cart-quantity">
-                  <button
-                    className="qty-btn"
-                    onClick={() => handleDecrease(userId, product._id, item.quantity)}
-                  >
-                    −
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    className="qty-btn"
-                    onClick={() => handleIncrease(userId, product._id, item.quantity)}
-                  >
-                    +
-                  </button>
-                </div>
-
-                <p className="cart-total">Subtotal: R$ {total}</p>
-
-                <button className="remove-btn" onClick={() => handleRemove(userId, product._id)}>
-                  Remover
-                </button>
-              </div>
+                    <p className="cart-total">Subtotal: R$ {total}</p>
+                    <button onClick={() => handleRemove(product.id)}>Remover</button>
+                  </div>
+                </>
+              ) : (
+                <p>Carregando...</p>
+              )}
             </div>
           );
         })}

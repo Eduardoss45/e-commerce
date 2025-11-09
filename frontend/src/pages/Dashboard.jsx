@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useUserStore } from '../store/useUserStore';
+import { useAppStore } from '../store/useAppStore';
 
 const Dashboard = () => {
-  const { user, fetchUserData, removeItemFromCart } = useUserStore();
+  const { user, fetchUserData, removeItemFromCart } = useAppStore();
 
   useEffect(() => {
     if (!user?._id) {

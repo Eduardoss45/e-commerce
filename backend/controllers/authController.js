@@ -2,6 +2,7 @@ const { User } = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const mongoose = require('mongoose');
 const generateCode = require('../utils/generateCode');
 const getTemplate = require('../utils/getTemplate');
 const sendMail = require('../utils/sendMail');
@@ -367,8 +368,15 @@ async function resetPassword(req, res) {
 }
 
 async function getMe(req, res) {
+  const id = req.user.id;
+
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(400).json({ msg: 'ID inválido!' });
+
   try {
-    const user = await User.findById(req.user.id, '-password -__v').populate('cart.productId');
+    const user = await User.findById(id, '-password -__v')
+      .populate('cart.productId')
+      .populate('favorites.productId');
     if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' });
     res.status(200).json({ user });
   } catch (err) {

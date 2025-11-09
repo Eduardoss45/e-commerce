@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-// * middlewares
 function checkEmptyBody(req, res, next) {
   const methodsWithBody = ['POST', 'PUT', 'PATCH'];
   if (methodsWithBody.includes(req.method)) {
@@ -26,5 +25,4 @@ function checkToken(req, res, next) {
   }
 }
 
-// * exportando middlewares
 module.exports = { checkEmptyBody, checkToken };

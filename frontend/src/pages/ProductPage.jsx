@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
+import { useAppStore } from '../store/useAppStore';
 import { useParams } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore';
-import { useCartStore } from '../store/useCartStore';
-import { useManagerProducts } from '../hooks/useManagerProducts';
+import { useProducts } from '../hooks/useProducts';
 import { useManager } from '../hooks/useManager';
 import { toast } from 'react-toastify';
 
 const ProductPage = () => {
   const { id } = useParams();
-  const { cart } = useCartStore();
-  const { addItem, removeItem } = useManagerProducts();
-  const { user } = useAuthStore();
+  const { cart, favorites, user } = useAppStore();
+  const { addItemToCart, removeItemFromCart, addItemToFavorites, removeItemFromFavorites } =
+    useProducts();
   const { data, loading, error } = useManager({});
   const [product, setProduct] = useState(null);
   const [currentImage, setCurrentImage] = useState(0);
   const [isInCart, setIsInCart] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
-  // Carrega produto específico
+  // Busca produto pelo ID
   useEffect(() => {
     if (data?.products) {
       const found = data.products.find(p => String(p.id) === id);
@@ -24,12 +24,21 @@ const ProductPage = () => {
     }
   }, [data, id]);
 
+  // Verifica se está no carrinho
   useEffect(() => {
     const exists = cart.some(
       item => String(item.product?._id) === id || String(item.productId) === id
     );
     setIsInCart(exists);
   }, [cart, id]);
+
+  // Verifica se está nos favoritos
+  useEffect(() => {
+    const exists = favorites?.some(
+      item => String(item.product?._id) === id || String(item.productId) === id
+    );
+    setIsFavorite(exists);
+  }, [favorites, id]);
 
   if (loading) return <p>Carregando produto...</p>;
   if (error) return <p>Erro ao carregar produto.</p>;
@@ -49,14 +58,42 @@ const ProductPage = () => {
 
     try {
       if (isInCart) {
-        await removeItem(user._id, productId);
+        await removeItemFromCart(user._id, productId);
         toast.success('Produto removido do carrinho.');
       } else {
-        await addItem(user._id, productId, 1);
+        await addItemToCart(user._id, productId, 1);
         toast.success('Produto adicionado ao carrinho.');
       }
     } catch (err) {
       toast.error('Ocorreu um erro ao atualizar o carrinho.');
+      console.error(err);
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!user?._id) {
+      toast.info('Você precisa estar logado para adicionar aos favoritos.');
+      return;
+    }
+
+    const productId = Number(id);
+    if (isNaN(productId)) {
+      toast.error('ID de produto inválido.');
+      return;
+    }
+
+    try {
+      if (isFavorite) {
+        await removeItemFromFavorites(user._id, productId);
+        setIsFavorite(false);
+        toast.success('Produto removido dos favoritos.');
+      } else {
+        await addItemToFavorites(user._id, productId);
+        setIsFavorite(true);
+        toast.success('Produto adicionado aos favoritos.');
+      }
+    } catch (err) {
+      toast.error('Ocorreu um erro ao atualizar os favoritos.');
       console.error(err);
     }
   };
@@ -82,7 +119,6 @@ const ProductPage = () => {
 
   return (
     <div className="product-page">
-      {/* Galeria de imagens */}
       <div className="product-gallery">
         <img src={images?.[currentImage]} alt={title} className="product-main-image" />
         <div className="product-thumbnails">
@@ -98,9 +134,20 @@ const ProductPage = () => {
         </div>
       </div>
 
-      {/* Detalhes do produto */}
       <div className="product-details">
-        <h2>{title}</h2>
+        <div className="product-header">
+          <div>
+            <h2>{title}</h2>
+          </div>
+          <div
+            className="favorite-icon"
+            onClick={handleToggleFavorite}
+            style={{ cursor: 'pointer' }}
+          >
+            {isFavorite ? <i className="fas fa-star"></i> : <i className="far fa-star"></i>}
+          </div>
+        </div>
+
         <p className="brand">
           {brand} — {category}
         </p>
@@ -123,13 +170,13 @@ const ProductPage = () => {
 
         <p className="description">{description}</p>
 
-        {/* Informações adicionais */}
         <div className="extra-info">
           <p>
             <strong>Estoque:</strong> {stock} unidades
           </p>
           <p>
-            <strong>Classificação:</strong> {rating?.toFixed(1) || 0} ⭐
+            <strong>Classificação:</strong> {rating?.toFixed(1) || 0}{' '}
+            <i className="fas fa-star"></i>
           </p>
           <p>
             <strong>Peso:</strong> {weight}g
@@ -145,14 +192,13 @@ const ProductPage = () => {
           </p>
         </div>
 
-        {/* Avaliações */}
         <div className="reviews">
           <h3>Avaliações</h3>
           {reviews?.length ? (
             reviews.map((r, i) => (
               <div key={i} className="review">
-                <strong>{r.reviewerName}</strong> ({r.rating}⭐)
-                <p>{r.comment}</p>
+                <strong>{r.reviewerName}</strong> ({r.rating}
+                <i className="fas fa-star"></i>)<p>{r.comment}</p>
               </div>
             ))
           ) : (

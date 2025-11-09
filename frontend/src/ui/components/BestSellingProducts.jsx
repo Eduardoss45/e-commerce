@@ -25,7 +25,7 @@ const BestSellingProducts = ({ id, thumbnail, description, category, name, price
         className="btn"
         onClick={e => {
           e.stopPropagation();
-          alert('Adicionar ao carrinho');
+          navigate(`/product/${id}`);
         }}
       >
         Comprar

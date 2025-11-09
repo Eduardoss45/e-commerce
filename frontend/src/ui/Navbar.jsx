@@ -1,24 +1,22 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore';
-import { useCartStore } from '../store/useCartStore';
+import { useAppStore } from '../store/useAppStore';
 
 const Navbar = () => {
   const location = useLocation();
-  const { user, isAuthenticated, clearAuth } = useAuthStore();
-  const { cart } = useCartStore();
+  const { user, isAuthenticated, clearAuth, cart, favorites } = useAppStore();
   const navigate = useNavigate();
 
   const cartCount = cart?.reduce((acc, item) => acc + (item.quantity || 1), 0) || 0;
+  const favoritesCount = favorites?.reduce((acc, item) => acc + (item.quantity || 1), 0) || 0;
   const loggedIn = isAuthenticated();
 
   const handleLogout = () => {
     clearAuth();
-    navigate('/'); // opcional: volta pra home ao sair
+    navigate('/');
   };
 
   return (
     <header className="header">
-      {/* 🔹 Topo */}
       <div className="header-top">
         <div className="header-top-container">
           <div className="store-info-container">
@@ -65,7 +63,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="main-header">
         <div className="main-header-container">
           <Link to="/" id="brand">
@@ -79,9 +77,9 @@ const Navbar = () => {
 
           <div className="header-actions-menu">
             <div className="wishlist-container">
-              <span className="qty">0</span>
+              <span className="qty">{favoritesCount}</span>
               <i className="far fa-heart"></i>
-              <a href="#">Favoritos</a>
+              <Link to="/favorites">Favoritos</Link>
             </div>
 
             <div className="header-cart-container">
@@ -93,7 +91,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* 🔹 Menu inferior */}
       <div className="header-bottom">
         <nav>
           <ul>

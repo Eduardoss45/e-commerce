@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { CartItem } = require('./cartItemModel');
+const { FavoriteItem } = require('./favoriteItemModel');
 
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -20,6 +21,7 @@ const UserSchema = new mongoose.Schema({
   },
   createdAt: { type: Date, default: Date.now },
   cart: [CartItem],
+  favorites: [FavoriteItem],
 });
 
 const User = mongoose.model('User', UserSchema);

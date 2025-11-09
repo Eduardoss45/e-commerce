@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useAuthStore } from '../store/useAuthStore';
+import { useAppStore } from '../store/useAppStore';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -9,7 +9,7 @@ const api = axios.create({
 api.interceptors.response.use(
   response => response,
   async error => {
-    const { clearAuth } = useAuthStore.getState();
+    const { clearAuth } = useAppStore.getState();
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {

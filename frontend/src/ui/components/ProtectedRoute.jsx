@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore } from '../../store/useAuthStore';
+import { useAppStore } from '../../store/useAppStore';
 
 export function ProtectedRoute({ requireVerification = false }) {
-  const { token, verified } = useAuthStore();
+  const { token, verified } = useAppStore();
 
   if (!token) return <Outlet />;
 

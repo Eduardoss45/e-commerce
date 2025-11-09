@@ -10,6 +10,7 @@ import CheckCode from './pages/CheckCode.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import CartPage from './pages/CartPage.jsx';
 import ProductPage from './pages/ProductPage.jsx';
+import FavoritesPage from './pages/FavoritesPage.jsx';
 import { ProtectedRoute } from './ui/components/ProtectedRoute.jsx';
 import CalculateShipping from './ui/components/CalculateShipping.jsx';
 
@@ -17,7 +18,7 @@ import './scss/app.scss';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
@@ -27,6 +28,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="shipping" element={<CalculateShipping />} />
           <Route path="product/:id" element={<ProductPage />} />
           <Route path="cart" element={<CartPage />} />
+          <Route path="favorites" element={<FavoritesPage />} />
           <Route element={<ProtectedRoute requireVerification={true} />}>
             <Route path="dashboard" element={<Dashboard />} />
           </Route>

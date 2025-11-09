@@ -1,32 +1,178 @@
 const { User } = require('../models/userModel');
+const mongoose = require('mongoose');
+const axios = require('axios');
 
-async function getProducts(req, res) {
-  const { id } = req.body;
+async function getCartProducts(req, res) {
+  const userId = req.params.id;
 
   try {
-    const user = await User.findOne({ 'cart._id': id });
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' });
 
-    if (!user) {
-      return res.status(404).json({ msg: 'Usuário ou item não encontrado.' });
-    }
+    const cartItems = user.cart || [];
+    if (cartItems.length === 0) return res.json({ products: [] });
 
-    const product = user.cart.id(id);
+    const productIds = cartItems.map(item => item.productId);
 
-    if (!product) {
-      return res.status(404).json({ msg: 'Produto não encontrado no carrinho.' });
-    }
+    const requests = productIds.map(id =>
+      axios.get(`https://dummyjson.com/products/${id}`).then(r => r.data)
+    );
 
-    // Converte o subdocumento em objeto puro e remove o _id
-    const plainProduct = product.toObject();
-    delete plainProduct._id;
+    const productsData = await Promise.all(requests);
 
-    res.status(200).json({ produto: plainProduct });
+    const products = cartItems.map((item, i) => ({
+      _id: item._id,
+      productId: item.productId,
+      quantity: item.quantity,
+      details: productsData[i],
+    }));
+
+    res.json({ products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      msg: 'Aconteceu um erro no servidor, tente novamente mais tarde!',
-    });
+    res.status(500).json({ msg: 'Erro ao buscar produtos do carrinho' });
   }
 }
 
-module.exports = { getProducts };
+async function getFavoriteProducts(req, res) {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' });
+
+    const favorites = user.favorites || [];
+    if (favorites.length === 0) return res.json({ favorites: [] });
+
+    const requests = favorites.map(fav =>
+      axios.get(`https://dummyjson.com/products/${fav.productId}`).then(r => r.data)
+    );
+
+    const favoritesData = await Promise.all(requests);
+
+    const response = favorites.map((fav, i) => ({
+      _id: fav._id,
+      productId: fav.productId,
+      details: favoritesData[i],
+    }));
+
+    res.json({ favorites: response });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Erro ao buscar favoritos' });
+  }
+}
+
+async function addItemToCart(req, res) {
+  const userId = req.params.id;
+  const { productId, quantity } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(userId))
+    return res.status(400).json({ msg: 'ID inválido!' });
+  if (!productId || !quantity || quantity <= 0)
+    return res.status(422).json({ msg: 'Dados do produto inválidos!' });
+
+  const user = await User.findById(userId);
+  if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' });
+
+  const existingItem = user.cart.find(item => item.productId === productId);
+
+  if (existingItem) {
+    existingItem.quantity += quantity;
+  } else {
+    user.cart.push({ productId, quantity });
+  }
+
+  await user.save();
+
+  return res.status(200).json({
+    msg: 'Produto adicionado ao carrinho com sucesso',
+    cart: user.cart,
+  });
+}
+
+async function removeItemFromCart(req, res) {
+  const userId = req.params.id;
+  const { cartItemId } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(userId))
+    return res.status(400).json({ msg: 'ID inválido!' });
+  if (!mongoose.Types.ObjectId.isValid(cartItemId))
+    return res.status(422).json({ msg: 'ID do item inválido!' });
+
+  const user = await User.findById(userId);
+  if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' });
+
+  const itemIndex = user.cart.findIndex(item => item._id.toString() === cartItemId);
+  if (itemIndex === -1) return res.status(404).json({ msg: 'Produto não encontrado no carrinho!' });
+
+  user.cart.splice(itemIndex, 1);
+
+  await user.save();
+
+  return res.status(200).json({
+    msg: 'Produto removido do carrinho com sucesso',
+    cart: user.cart,
+  });
+}
+
+async function addItemToFavorites(req, res) {
+  const userId = req.params.id;
+  const { productId } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(userId))
+    return res.status(400).json({ msg: 'ID de usuário inválido!' });
+  if (!productId) return res.status(422).json({ msg: 'Dados do produto inválidos!' });
+
+  const user = await User.findById(userId);
+  if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' });
+
+  const alreadyExists = user.favorites.some(item => String(item.productId) === String(productId));
+
+  if (!alreadyExists) {
+    user.favorites.push({ productId });
+    await user.save();
+  }
+
+  return res.status(200).json({
+    msg: alreadyExists
+      ? 'Produto já está nos favoritos.'
+      : 'Produto adicionado aos favoritos com sucesso.',
+    favorites: user.favorites,
+  });
+}
+
+async function removeItemFromFavorites(req, res) {
+  const userId = req.params.id;
+  const { favoriteItemId } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(userId))
+    return res.status(400).json({ msg: 'ID de usuário inválido!' });
+  if (!mongoose.Types.ObjectId.isValid(favoriteItemId))
+    return res.status(422).json({ msg: 'ID do item inválido!' });
+
+  const user = await User.findById(userId);
+  if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' });
+
+  const itemIndex = user.favorites.findIndex(item => String(item._id) === String(favoriteItemId));
+
+  if (itemIndex === -1)
+    return res.status(404).json({ msg: 'Produto não encontrado nos favoritos!' });
+
+  user.favorites.splice(itemIndex, 1);
+  await user.save();
+
+  return res.status(200).json({
+    msg: 'Produto removido dos favoritos com sucesso',
+    favorites: user.favorites,
+  });
+}
+
+module.exports = {
+  getCartProducts,
+  getFavoriteProducts,
+  addItemToCart,
+  removeItemFromCart,
+  addItemToFavorites,
+  removeItemFromFavorites,
+};

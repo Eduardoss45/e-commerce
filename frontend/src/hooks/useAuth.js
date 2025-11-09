@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { toast } from 'react-toastify';
-import { useAuthStore } from '../store/useAuthStore';
+import { useAppStore } from '../store/useAppStore';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import api from '../services/api';
 
 export function useAuth() {
   const [loading, setLoading] = useState(false);
-  const { user, setAuth, clearAuth } = useAuthStore();
+  const { user, setAuth, clearAuth } = useAppStore();
   const navigate = useNavigate();
 
-  // 🔹 Registro de novo usuário
   const register = async (name, email, password, confirm_password) => {
     setLoading(true);
     try {
@@ -29,22 +28,17 @@ export function useAuth() {
     }
   };
 
-  // 🔹 Login (salva apenas o usuário, cookies são automáticos)
   const login = async (email, password) => {
     setLoading(true);
     try {
       const res = await api.post('/auth/login', { email, password });
       const { user } = res.data;
-      console.log(user);
-
       setAuth(user);
-
       if (!user.verified) {
         navigate('/verify');
       } else {
         navigate('/');
       }
-
       toast.success(res.data.msg);
     } catch (error) {
       const message = error.response?.data?.msg || error.message;
@@ -54,7 +48,6 @@ export function useAuth() {
     }
   };
 
-  // 🔹 Verificação de código
   const checkCode = async (code, email) => {
     setLoading(true);
     try {
@@ -71,7 +64,6 @@ export function useAuth() {
     }
   };
 
-  // 🔹 Reenvio de código
   const resendCode = async email => {
     setLoading(true);
     try {
@@ -85,7 +77,6 @@ export function useAuth() {
     }
   };
 
-  // 🔹 Logout (encerra sessão e limpa store)
   const logout = async () => {
     setLoading(true);
     try {
@@ -94,7 +85,7 @@ export function useAuth() {
       toast.info('Você saiu da conta.');
       navigate('/login');
     } catch (error) {
-      clearAuth(); // 🔸 garante limpeza mesmo se o backend falhar
+      clearAuth();
       const message = error.response?.data?.msg || error.message;
       toast.error(message);
     } finally {
@@ -111,6 +102,5 @@ export function useAuth() {
     }
   };
 
-  // 🔸 Retorna fetchSession também!
   return { user, loading, register, login, checkCode, resendCode, logout, fetchSession };
 }

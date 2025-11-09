@@ -12,8 +12,14 @@ const {
   forgotPassword,
   resetPassword,
 } = require('../controllers/authController');
-const { userData, userAddItemCart, userRemoveItemCart } = require('../controllers/userController');
-const { getProducts } = require('../controllers/productController');
+const {
+  getFavoriteProducts,
+  getCartProducts,
+  removeItemFromCart,
+  addItemToFavorites,
+  removeItemFromFavorites,
+  addItemToCart,
+} = require('../controllers/productController');
 
 router.post('/auth/register', checkEmptyBody, registerController);
 router.post('/auth/login', checkEmptyBody, loginController);
@@ -25,9 +31,11 @@ router.get('/auth/me', checkToken, getMe);
 
 router.post('/password-reset-request', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
-router.post('/products',  getProducts);
-router.get('/user/:id', checkToken, userData);
-router.post('/user/:id/add-item-cart', checkToken, checkEmptyBody, userAddItemCart);
-router.post('/user/:id/remove-item-cart', checkToken, checkEmptyBody, userRemoveItemCart);
+router.get('/user/:id/cart-products', getCartProducts);
+router.get('/user/:id/favorite-products', getFavoriteProducts);
+router.post('/user/:id/add-item-cart', checkToken, checkEmptyBody, addItemToCart);
+router.post('/user/:id/remove-item-cart', checkToken, checkEmptyBody, removeItemFromCart);
+router.post('/user/:id/add-item-favorites', checkToken, checkEmptyBody, addItemToFavorites);
+router.post('/user/:id/remove-item-favorites', checkToken, checkEmptyBody, removeItemFromFavorites);
 
 module.exports = router;
