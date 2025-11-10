@@ -69,24 +69,36 @@ async function addItemToCart(req, res) {
 
   if (!mongoose.Types.ObjectId.isValid(userId))
     return res.status(400).json({ msg: 'ID inválido!' });
-  if (!productId || !quantity || quantity <= 0)
-    return res.status(422).json({ msg: 'Dados do produto inválidos!' });
+
+  if (!productId || typeof quantity !== 'number' || quantity === 0)
+    return res.status(422).json({ msg: 'Quantidade inválida!' });
 
   const user = await User.findById(userId);
   if (!user) return res.status(404).json({ msg: 'Usuário não encontrado' });
 
-  const existingItem = user.cart.find(item => item.productId === productId);
+  const itemIndex = user.cart.findIndex(item => String(item.productId) === String(productId));
 
-  if (existingItem) {
-    existingItem.quantity += quantity;
-  } else {
+  if (itemIndex >= 0) {
+    const newQuantity = user.cart[itemIndex].quantity + quantity;
+
+    if (newQuantity <= 0) {
+      user.cart.splice(itemIndex, 1);
+    } else {
+      user.cart[itemIndex].quantity = newQuantity;
+    }
+  } else if (quantity > 0) {
     user.cart.push({ productId, quantity });
+  } else {
+    return res
+      .status(400)
+      .json({ msg: 'Não é possível subtrair um item que não está no carrinho' });
   }
 
+  user.markModified('cart');
   await user.save();
 
   return res.status(200).json({
-    msg: 'Produto adicionado ao carrinho com sucesso',
+    msg: 'Carrinho atualizado com sucesso',
     cart: user.cart,
   });
 }

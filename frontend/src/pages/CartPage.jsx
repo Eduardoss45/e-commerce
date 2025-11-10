@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import axios from 'axios';
+import ProductCardCompact from '../ui/components/ProductCardCompact';
 
 const CartPage = () => {
   const { cart, user, addToCart, removeFromCart, fetchUserProducts } = useAppStore();
@@ -8,7 +9,7 @@ const CartPage = () => {
 
   useEffect(() => {
     const loadCart = async () => {
-      if (!user?._id) return;
+      if (!user?._id || cart.length === 0) return;
 
       await fetchUserProducts();
 
@@ -20,7 +21,7 @@ const CartPage = () => {
     };
 
     loadCart();
-  }, [user?._id]);
+  }, [user?._id, cart]);
 
   const handleIncrease = async (productId, quantity) => {
     await addToCart({ productId, quantity: quantity + 1 });
@@ -48,35 +49,18 @@ const CartPage = () => {
       <div className="cart-grid">
         {cart.map(item => {
           const product = products.find(p => String(p.id) === String(item.productId));
-          const total = product ? (product.price * item.quantity).toFixed(2) : '0.00';
 
           return (
-            <div className="cart-card" key={item._id}>
-              {product ? (
-                <>
-                  <img
-                    src={product.thumbnail || '/placeholder.png'}
-                    alt={product.title}
-                    className="cart-img"
-                  />
-                  <div className="cart-info">
-                    <h3>{product.title}</h3>
-                    <p>R$ {product.price}</p>
-
-                    <div className="cart-quantity">
-                      <button onClick={() => handleDecrease(product.id, item.quantity)}>−</button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => handleIncrease(product.id, item.quantity)}>+</button>
-                    </div>
-
-                    <p className="cart-total">Subtotal: R$ {total}</p>
-                    <button onClick={() => handleRemove(product.id)}>Remover</button>
-                  </div>
-                </>
-              ) : (
-                <p>Carregando...</p>
-              )}
-            </div>
+            product && (
+              <ProductCardCompact
+                key={item.productId}
+                product={product}
+                quantity={item.quantity}
+                onIncrease={handleIncrease}
+                onDecrease={handleDecrease}
+                onRemove={handleRemove}
+              />
+            )
           );
         })}
       </div>

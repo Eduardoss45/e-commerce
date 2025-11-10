@@ -1,0 +1,76 @@
+@use '../1-base/variables';
+@use 'sass:color';
+
+.favorite-card-compact {
+  display: flex;
+  align-items: stretch;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: 0.2s ease;
+  cursor: pointer;
+  max-width: 600px;
+  margin-bottom: 1rem;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  &__image {
+    flex: 0 0 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafafa;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    padding: 1rem;
+
+    .favorite-card-compact__title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+
+    .favorite-card-compact__desc {
+      color: #555;
+      font-size: 0.9rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .favorite-card-compact__price {
+      font-weight: 600;
+      color: #27ae60;
+      margin-bottom: 0.8rem;
+    }
+
+    &__actions {
+      display: flex;
+      justify-content: flex-end;
+
+      .remove-btn {
+        background: none;
+        border: none;
+        color: #e74c3c;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: 0.2s;
+
+        &:hover {
+          transform: scale(1.1);
+          color: adjust(variables.$primary-color, 10%);
+        }
+      }
+    }
+  }
+}

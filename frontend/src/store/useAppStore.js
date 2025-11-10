@@ -58,9 +58,14 @@ export const useAppStore = create(
 
       addToCart: async item => {
         const cart = [...get().cart];
-        const existing = cart.find(p => p.productId === item.productId);
-        if (existing) existing.quantity += item.quantity;
-        else cart.push(item);
+        const existingIndex = cart.findIndex(p => p.productId === item.productId);
+
+        if (existingIndex !== -1) {
+          cart[existingIndex] = { ...cart[existingIndex], quantity: item.quantity };
+        } else {
+          cart.push(item);
+        }
+
         set({ cart });
 
         const id = get().user?._id;
@@ -79,13 +84,12 @@ export const useAppStore = create(
 
       removeFromCart: async productId => {
         const id = get().user?._id;
+
         set({ cart: get().cart.filter(p => p.productId !== productId) });
 
         if (id) {
           try {
-            const res = await api.post(`/user/${id}/remove-item-cart`, {
-              productId,
-            });
+            const res = await api.post(`/user/${id}/remove-item-cart`, { productId });
             set({ cart: res.data.cart });
           } catch (err) {
             console.error('Erro ao remover item:', err);

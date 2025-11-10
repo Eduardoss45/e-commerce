@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import axios from 'axios';
+import FavoriteCardCompact from '../ui/components/FavoriteCardCompact';
 
 const FavoritesPage = () => {
   const { favorites, user, removeFromFavorites, fetchUserProducts } = useAppStore();
@@ -42,24 +43,9 @@ const FavoritesPage = () => {
           const product = products.find(p => String(p.id) === String(item.productId));
 
           return (
-            <div key={item._id} className="favorite-card">
-              {product ? (
-                <>
-                  <img
-                    src={product.thumbnail || '/placeholder.png'}
-                    alt={product.title}
-                    className="favorite-img"
-                  />
-                  <div className="favorite-info">
-                    <h3>{product.title}</h3>
-                    <p>R$ {product.price}</p>
-                    <button onClick={() => handleRemove(product.id)}>Remover</button>
-                  </div>
-                </>
-              ) : (
-                <p>Carregando...</p>
-              )}
-            </div>
+            product && (
+              <FavoriteCardCompact key={item._id} product={product} onRemove={handleRemove} />
+            )
           );
         })}
       </div>
