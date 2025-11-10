@@ -1,21 +1,21 @@
-@use '../1-base/variables';
-@use 'sass:color';
+@use '../1-base/variables' as *;
+@use '../1-base/mixins' as *;
 
 .favorite-card-compact {
   display: flex;
   align-items: stretch;
-  background: #fff;
+  background: $light-color;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba($dark-color, 0.1);
   transition: 0.2s ease;
   cursor: pointer;
   max-width: 600px;
-  margin-bottom: 1rem;
+  margin-bottom: $padding;
 
   &:hover {
     transform: scale(1.02);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 15px rgba($dark-color, 0.15);
   }
 
   &__image {
@@ -34,7 +34,7 @@
 
   &__content {
     flex: 1;
-    padding: 1rem;
+    padding: $padding;
 
     .favorite-card-compact__title {
       font-size: 1.2rem;
@@ -61,14 +61,14 @@
       .remove-btn {
         background: none;
         border: none;
-        color: #e74c3c;
+        color: $primary-color;
         font-size: 1.2rem;
         cursor: pointer;
         transition: 0.2s;
 
         &:hover {
           transform: scale(1.1);
-          color: adjust(variables.$primary-color, 10%);
+          opacity: 0.8;
         }
       }
     }

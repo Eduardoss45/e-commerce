@@ -79,12 +79,10 @@ async function addItemToCart(req, res) {
   const itemIndex = user.cart.findIndex(item => String(item.productId) === String(productId));
 
   if (itemIndex >= 0) {
-    const newQuantity = user.cart[itemIndex].quantity + quantity;
-
-    if (newQuantity <= 0) {
+    if (quantity <= 0) {
       user.cart.splice(itemIndex, 1);
     } else {
-      user.cart[itemIndex].quantity = newQuantity;
+      user.cart[itemIndex].quantity = quantity;
     }
   } else if (quantity > 0) {
     user.cart.push({ productId, quantity });

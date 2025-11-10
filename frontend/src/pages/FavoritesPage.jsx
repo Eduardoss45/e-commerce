@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
+import { useProducts } from '../hooks/useProducts';
 import axios from 'axios';
 import FavoriteCardCompact from '../ui/components/FavoriteCardCompact';
 
 const FavoritesPage = () => {
-  const { favorites, user, removeFromFavorites, fetchUserProducts } = useAppStore();
+  const { favorites, user, fetchUserProducts } = useAppStore();
+  const { removeFromFavorites } = useProducts();
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -12,6 +14,11 @@ const FavoritesPage = () => {
       if (!user?._id) return;
 
       await fetchUserProducts();
+
+      if (favorites.length === 0) {
+        setProducts([]);
+        return;
+      }
 
       const productIds = favorites.map(f => f.productId);
       const responses = await Promise.all(
@@ -21,7 +28,7 @@ const FavoritesPage = () => {
     };
 
     loadFavorites();
-  }, [user?._id]);
+  }, [user?._id, favorites.length]);
 
   const handleRemove = async productId => {
     await removeFromFavorites(productId);

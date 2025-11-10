@@ -23,13 +23,13 @@ const FavoriteCardCompact = ({ product, onRemove }) => {
         <p className="favorite-card-compact__price">R$ {product.price}</p>
 
         <div className="favorite-card-compact__actions" onClick={e => e.stopPropagation()}>
-          <button
+          {/* <button
             className="remove-btn"
             onClick={() => onRemove(product.id)}
             title="Remover dos favoritos"
           >
             <FaHeartBroken />
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

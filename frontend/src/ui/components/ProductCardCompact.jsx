@@ -33,13 +33,13 @@ const ProductCardCompact = ({ product, quantity, onIncrease, onDecrease, onRemov
             </button>
           </div>
 
-          <button
+          {/* <button
             className="remove-btn"
             onClick={() => onRemove(product.id)}
             title="Remover do carrinho"
           >
             <FaTrashAlt />
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
