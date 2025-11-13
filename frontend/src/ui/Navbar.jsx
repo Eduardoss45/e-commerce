@@ -1,10 +1,27 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/useAppStore';
+import { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+
+const electronicCategories = [
+  'smartphones',
+  'laptops',
+  'mobile-accessories',
+  'tablets',
+  'mens-watches',
+  'womens-watches',
+];
 
 const Navbar = () => {
   const location = useLocation();
   const { user, isAuthenticated, clearAuth, cart, favorites } = useAppStore();
   const navigate = useNavigate();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef(null);
 
   const cartCount = cart?.reduce((acc, item) => acc + (item.quantity || 1), 0) || 0;
   const favoritesCount = favorites?.reduce((acc, item) => acc + (item.quantity || 1), 0) || 0;
@@ -13,6 +30,55 @@ const Navbar = () => {
   const handleLogout = () => {
     clearAuth();
     navigate('/');
+  };
+
+  useEffect(() => {
+    const handler = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+    };
+  }, []);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchTerm.length > 2) {
+        performSearch(searchTerm);
+      } else {
+        setSearchResults([]);
+        setShowDropdown(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+
+  const performSearch = async (query) => {
+    setLoadingSearch(true);
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_SUPPLIER_URL}/search?q=${query}`);
+      const filteredProducts = response.data.products.filter(product =>
+        electronicCategories.includes(product.category)
+      );
+      setSearchResults(filteredProducts);
+      setShowDropdown(true);
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error);
+      setSearchResults([]);
+    } finally {
+      setLoadingSearch(false);
+    }
+  };
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+    setSearchTerm('');
+    setSearchResults([]);
+    setShowDropdown(false);
   };
 
   return (
@@ -40,7 +106,7 @@ const Navbar = () => {
               <i className="fas fa-user"></i>{' '}
               {loggedIn ? (
                 <>
-                  <Link to="/user-account" className="user-link">
+                  <Link to="/account" className="user-link">
                     {user?.email || 'Minha Conta'}
                   </Link>
                   <span className="divider">|</span>
@@ -70,10 +136,37 @@ const Navbar = () => {
             Electron <i className="fas fa-bolt"></i>
           </Link>
 
-          <form id="search-form">
-            <input type="text" id="search" placeholder="Busque aqui" />
-            <input type="submit" className="btn btn-half" value="Pesquisar" />
-          </form>
+          <div id="search-form" ref={searchRef}>
+            <input
+              type="text"
+              id="search"
+              placeholder="Busque aqui"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onFocus={() => searchTerm.length > 2 && setSearchResults.length > 0 && setShowDropdown(true)}
+            />
+            {showDropdown && searchTerm.length > 2 && (
+              <div className="search-dropdown">
+                {loadingSearch ? (
+                  <div className="search-loading">Carregando...</div>
+                ) : searchResults.length > 0 ? (
+                  searchResults.map((product) => (
+                    <div
+                      key={product.id}
+                      className="search-item"
+                      onClick={() => handleProductClick(product.id)}
+                    >
+                      <img src={product.thumbnail} alt={product.title} />
+                      <span>{product.title}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="search-no-results">Nenhum produto encontrado.</div>
+                )}
+              </div>
+            )}
+            <button type="submit" className="btn btn-half" onClick={(e) => e.preventDefault()}>Pesquisar</button>
+          </div>
 
           <div className="header-actions-menu">
             <div className="wishlist-container">

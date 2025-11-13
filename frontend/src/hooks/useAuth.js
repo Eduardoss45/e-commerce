@@ -64,6 +64,20 @@ export function useAuth() {
     }
   };
 
+  const resetPassword = async email => {
+    setLoading(true);
+    try {
+      const res = await api.post('/auth/password-reset-request', { email });
+      navigate('/login');
+      toast.success(res.data.msg);
+    } catch (error) {
+      const message = error.response?.data?.msg || error.message;
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const resendCode = async email => {
     setLoading(true);
     try {
@@ -102,5 +116,15 @@ export function useAuth() {
     }
   };
 
-  return { user, loading, register, login, checkCode, resendCode, logout, fetchSession };
+  return {
+    user,
+    loading,
+    register,
+    login,
+    checkCode,
+    resendCode,
+    logout,
+    fetchSession,
+    resetPassword,
+  };
 }

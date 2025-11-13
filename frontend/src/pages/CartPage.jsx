@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import axios from 'axios';
 import ProductCardCompact from '../ui/components/ProductCardCompact';
+import api from '../services/api';
 
 const CartPage = () => {
   const { cart, user, addToCart, removeFromCart, fetchUserProducts } = useAppStore();
@@ -35,6 +36,19 @@ const CartPage = () => {
     await removeFromCart(productId);
   };
 
+  const handleCheckout = async () => {
+    try {
+      const response = await api.post('/create-checkout-session', {
+        cartItems: cart,
+      });
+      if (response.data.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (error) {
+      console.error('Erro ao finalizar compra:', error);
+    }
+  };
+
   if (!cart || cart.length === 0) {
     return (
       <div className="cart-empty">
@@ -64,6 +78,9 @@ const CartPage = () => {
           );
         })}
       </div>
+      <button className="btn btn-primary" onClick={handleCheckout}>
+        Finalizar Compra
+      </button>
     </div>
   );
 };

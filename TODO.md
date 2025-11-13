@@ -1,5 +1,0 @@
-- Criar pagina da conta do usuário
-- Alternar o estado de visibilidade da barra de pesquisa e torna-la funcional (menu de opções com titulo ou imagem pequena e título) e ir para o produto ao clicar nele e aplicar os filtros disponiveis no frontend para separar os produtos por categoria
-- Resolver erro da integração da api dos correios (substituir por algo)
-- Ajustar aparencia dos itens do carrinho e favoritos
-- Verificar o uso da ProtectedRoute

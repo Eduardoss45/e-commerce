@@ -45,6 +45,7 @@ const Login = () => {
         <button type="submit" disabled={loading}>
           {loading ? 'Aguarde...' : 'Entrar'}
         </button>
+        <Link to="/reset-password">Redefina sua senha</Link>
         <p>ou</p>
         <Link to="/register">Crie sua conta</Link>
       </form>

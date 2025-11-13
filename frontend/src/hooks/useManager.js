@@ -1,8 +1,17 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-export function useManager({ limit = 28 }) {
-  const [data, setData] = useState([]);
+const electronicCategories = [
+  'smartphones',
+  'laptops',
+  'mobile-accessories',
+  'tablets',
+  'mens-watches',
+  'womens-watches',
+];
+
+export function useManager() {
+  const [data, setData] = useState({ products: [] });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -11,12 +20,24 @@ export function useManager({ limit = 28 }) {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_SUPPLIER_URL}?limit=${limit}`);
-        if (!cancel) setData(response.data);
+        const categoryRequests = electronicCategories.map(category =>
+          axios.get(`${import.meta.env.VITE_SUPPLIER_URL}/category/${category}`)
+        );
+
+        const responses = await Promise.all(categoryRequests);
+        const allProducts = responses.flatMap(response => response.data.products);
+
+        if (!cancel) {
+          setData({ products: allProducts });
+        }
       } catch (error) {
-        if (!cancel) setError(error);
+        if (!cancel) {
+          setError(error);
+        }
       } finally {
-        if (!cancel) setLoading(false);
+        if (!cancel) {
+          setLoading(false);
+        }
       }
     };
 
@@ -25,7 +46,7 @@ export function useManager({ limit = 28 }) {
     return () => {
       cancel = true;
     };
-  }, [limit]);
+  }, []);
 
   return { data, error, loading };
 }

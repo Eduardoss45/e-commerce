@@ -46,7 +46,7 @@ const Register = () => {
         />
         <label htmlFor="password">Senha:</label>
         <input
-          type="password"
+          type="text"
           name="password"
           id="password"
           value={password}
@@ -54,7 +54,7 @@ const Register = () => {
         />
         <label htmlFor="confirm_password">Confirme sua senha:</label>
         <input
-          type="password"
+          type="text"
           name="confirm_password"
           id="confirm_password"
           value={confirmPassword}

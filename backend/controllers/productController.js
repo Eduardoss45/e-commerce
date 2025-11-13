@@ -1,6 +1,51 @@
 const { User } = require('../models/userModel');
 const mongoose = require('mongoose');
 const axios = require('axios');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+async function createCheckoutSession(req, res) {
+  const userId = req.user.id;
+  const { cartItems } = req.body;
+
+  if (!cartItems || cartItems.length === 0) {
+    return res.status(400).json({ msg: 'Carrinho vazio.' });
+  }
+
+  try {
+    const line_items = await Promise.all(
+      cartItems.map(async (item) => {
+        const product = await axios.get(`https://dummyjson.com/products/${item.productId}`);
+        return {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: product.data.title,
+              images: [product.data.thumbnail],
+            },
+            unit_amount: Math.round(product.data.price * 100),
+          },
+          quantity: item.quantity,
+        };
+      })
+    );
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items,
+      mode: 'payment',
+      success_url: `${process.env.CLIENT_URL}/success`,
+      cancel_url: `${process.env.CLIENT_URL}/cancel`,
+      customer_email: req.user.email,
+      metadata: { userId: userId },
+    });
+
+    res.json({ url: session.url });
+  } catch (error) {
+    console.error('Erro ao criar sessão de checkout:', error);
+    res.status(500).json({ msg: 'Erro ao criar sessão de checkout.' });
+  }
+}
+
 
 async function getCartProducts(req, res) {
   const userId = req.params.id;
@@ -185,4 +230,5 @@ module.exports = {
   removeItemFromCart,
   addItemToFavorites,
   removeItemFromFavorites,
+  createCheckoutSession,
 };

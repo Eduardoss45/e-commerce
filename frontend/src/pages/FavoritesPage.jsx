@@ -36,16 +36,16 @@ const FavoritesPage = () => {
 
   if (!favorites || favorites.length === 0) {
     return (
-      <div className="favorites-empty">
+      <div className="favorite-empty">
         <h2>Você ainda não adicionou favoritos ❤️</h2>
       </div>
     );
   }
 
   return (
-    <div className="favorites-page">
-      <h2 className="favorites-title">Meus Favoritos</h2>
-      <div className="favorites-grid">
+    <div className="favorite-page">
+      <h2 className="favorite-title">Meus Favoritos</h2>
+      <div className="favorite-grid">
         {favorites.map(item => {
           const product = products.find(p => String(p.id) === String(item.productId));
 

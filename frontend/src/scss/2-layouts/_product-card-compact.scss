@@ -1,5 +1,6 @@
 @use '../1-base/variables' as *;
 @use '../1-base/mixins' as *;
+@use 'sass:math';
 
 .product-card-compact {
   display: flex;
@@ -66,7 +67,7 @@
     .quantity-control {
       display: flex;
       align-items: center;
-      gap: $padding / 2;
+      gap: math.div($padding, 2);
       background: #f0f0f0;
       border-radius: 8px;
       padding: 0.3rem 0.6rem;

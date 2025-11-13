@@ -118,3 +118,33 @@
     color: variables.$gray-text-color;
   }
 }
+
+.success-page,
+.cancel-page {
+  padding: 2rem;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: variables.$primary-color;
+  }
+
+  p {
+    font-size: 1.2rem;
+    color: variables.$gray-text-color;
+  }
+}
+
+.success-page h2 {
+  color: #28a745; /* Green for success */
+}
+
+.cancel-page h2 {
+  color: #dc3545; /* Red for cancel */
+}

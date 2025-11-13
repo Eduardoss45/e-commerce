@@ -7,11 +7,14 @@ import Home from './pages/Home.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
 import CheckCode from './pages/CheckCode.jsx';
-import Dashboard from './pages/Dashboard.jsx';
+import ResetPassword from './pages/ResetPassword.jsx';
 import CartPage from './pages/CartPage.jsx';
 import ProductPage from './pages/ProductPage.jsx';
 import FavoritesPage from './pages/FavoritesPage.jsx';
-import { ProtectedRoute } from './ui/components/ProtectedRoute.jsx';
+import SuccessPage from './pages/SuccessPage.jsx';
+import CancelPage from './pages/CancelPage.jsx';
+import AccountPage from './pages/AccountPage.jsx';
+import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import CalculateShipping from './ui/components/CalculateShipping.jsx';
 
 import './scss/app.scss';
@@ -25,13 +28,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="verify" element={<CheckCode />} />
+          <Route path="reset-password" element={<ResetPassword />} />
           <Route path="shipping" element={<CalculateShipping />} />
           <Route path="product/:id" element={<ProductPage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="favorites" element={<FavoritesPage />} />
-          <Route element={<ProtectedRoute requireVerification={true} />}>
-            <Route path="dashboard" element={<Dashboard />} />
-          </Route>
+          <Route path="success" element={<SuccessPage />} />
+          <Route path="cancel" element={<CancelPage />} />
+          <Route path="reset-password/:token" element={<ResetPasswordPage />} />
+          <Route path="account" element={<AccountPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

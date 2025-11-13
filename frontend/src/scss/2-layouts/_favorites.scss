@@ -1,0 +1,27 @@
+@use '../1-base/variables';
+@use '../1-base/base-mixins';
+
+.favorite-page {
+  padding: 2rem;
+  min-height: 80vh;
+
+  .favorite-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: variables.$primary-color;
+  }
+
+  .favorite-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .favorite-empty {
+    text-align: center;
+    margin-top: 5rem;
+    color: variables.$gray-text-color;
+  }
+}
