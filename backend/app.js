@@ -14,11 +14,12 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: [process.env.CORS_ORIGIN_1, process.env.CORS_ORIGIN_2],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
 );
+
 
 // * routes
 app.use('/', router);
