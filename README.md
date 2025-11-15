@@ -1,6 +1,4 @@
-# Documentação do Projeto E-commerce
-
-Este documento descreve a arquitetura e as funcionalidades do projeto de e-commerce, que é dividido em um backend Node.js e um frontend React.
+# Electron
 
 ## Backend
 
