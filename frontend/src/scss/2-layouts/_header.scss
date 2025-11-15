@@ -178,7 +178,8 @@
       align-items: center;
 
       .wishlist-container,
-      .header-cart-container {
+      .header-cart-container,
+      .header-login-container {
         @include layouts-mixins.header-icon;
 
         @include base.mobile {

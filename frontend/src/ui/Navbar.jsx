@@ -33,7 +33,7 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    const handler = (event) => {
+    const handler = event => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowDropdown(false);
       }
@@ -57,7 +57,7 @@ const Navbar = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
 
-  const performSearch = async (query) => {
+  const performSearch = async query => {
     setLoadingSearch(true);
     try {
       const response = await axios.get(`${import.meta.env.VITE_SUPPLIER_URL}/search?q=${query}`);
@@ -74,7 +74,7 @@ const Navbar = () => {
     }
   };
 
-  const handleProductClick = (productId) => {
+  const handleProductClick = productId => {
     navigate(`/product/${productId}`);
     setSearchTerm('');
     setSearchResults([]);
@@ -142,15 +142,17 @@ const Navbar = () => {
               id="search"
               placeholder="Busque aqui"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onFocus={() => searchTerm.length > 2 && setSearchResults.length > 0 && setShowDropdown(true)}
+              onChange={e => setSearchTerm(e.target.value)}
+              onFocus={() =>
+                searchTerm.length > 2 && setSearchResults.length > 0 && setShowDropdown(true)
+              }
             />
             {showDropdown && searchTerm.length > 2 && (
               <div className="search-dropdown">
                 {loadingSearch ? (
                   <div className="search-loading">Carregando...</div>
                 ) : searchResults.length > 0 ? (
-                  searchResults.map((product) => (
+                  searchResults.map(product => (
                     <div
                       key={product.id}
                       className="search-item"
@@ -165,7 +167,9 @@ const Navbar = () => {
                 )}
               </div>
             )}
-            <button type="submit" className="btn btn-half" onClick={(e) => e.preventDefault()}>Pesquisar</button>
+            <button type="submit" className="btn btn-half" onClick={e => e.preventDefault()}>
+              Pesquisar
+            </button>
           </div>
 
           <div className="header-actions-menu">
@@ -180,6 +184,13 @@ const Navbar = () => {
               <i className="fas fa-shopping-cart"></i>
               <Link to="/cart">Carrinho</Link>
             </div>
+
+            {!user && (
+              <div className="header-login-container">
+                <i className="fas fa-user"></i>
+                <Link to="/login">Login</Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

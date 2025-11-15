@@ -83,16 +83,16 @@ async function loginController(req, res) {
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: process.env.MODE === 'production',
-      sameSite: 'strict',
+      secure: process.env.MODE === 'production' ? true : true,
+      sameSite: process.env.MODE === 'production' ? 'strict' : 'none',
       maxAge: 15 * 60 * 1000,
       path: '/',
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.MODE === 'production',
-      sameSite: 'strict',
+      secure: process.env.MODE === 'production' ? true : true,
+      sameSite: process.env.MODE === 'production' ? 'strict' : 'none',
       maxAge: 30 * 24 * 60 * 60 * 1000,
       path: '/auth/refresh',
     });
@@ -183,23 +183,23 @@ async function refreshToken(req, res) {
     user.refreshTokens.push(refreshHash);
     await user.save();
 
-    res.cookie('refreshToken', newRefreshToken, {
-      httpOnly: true,
-      secure: process.env.MODE === 'production',
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      path: '/auth/refresh',
-    });
-
     const access_secret = process.env.ACCESS_SECRET;
     const token = jwt.sign({ id: user._id, email: user.email }, access_secret, {
       expiresIn: '15m',
     });
 
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.MODE === 'production' ? true : true,
+      sameSite: process.env.MODE === 'production' ? 'strict' : 'none',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/auth/refresh',
+    });
+
     res.cookie('accessToken', token, {
       httpOnly: true,
-      secure: process.env.MODE === 'production',
-      sameSite: 'strict',
+      secure: process.env.MODE === 'production' ? true : true,
+      sameSite: process.env.MODE === 'production' ? 'strict' : 'none',
       maxAge: 15 * 60 * 1000,
       path: '/',
     });
@@ -315,7 +315,7 @@ async function forgotPassword(req, res) {
     user.resetPasswordToken = token;
     user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
     await user.save();
-    const resetLink = `${process.env.BASE_URL_FRONTEND}${process.env.RESET_PASS}${token}`;
+    const resetLink = `${process.env.CLIENT_URL}${process.env.RESET_PASS}${token}`;
     const html = getTemplate('change_password', { name: user.name, link: resetLink });
     if (process.env.NODE_ENV !== 'production') {
       console.log(`[Reset Link]: ${resetLink}`);
@@ -370,8 +370,7 @@ async function resetPassword(req, res) {
 async function getMe(req, res) {
   const id = req.user.id;
 
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(400).json({ msg: 'ID inválido!' });
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ msg: 'ID inválido!' });
 
   try {
     const user = await User.findById(id, '-password -__v')

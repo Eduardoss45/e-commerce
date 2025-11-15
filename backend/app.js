@@ -12,14 +12,25 @@ const cookieParser = require('cookie-parser');
 // * middlewares
 app.use(express.json());
 app.use(cookieParser());
+const allowedOrigins = [process.env.CORS_ORIGIN_1, process.env.CORS_ORIGIN_2];
+
 app.use(
   cors({
-    origin: [process.env.CORS_ORIGIN_1, process.env.CORS_ORIGIN_2],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: (origin, callback) => {
+      console.log('🔎 Origin recebida:', origin);
+      console.log('🔎 Allowed:', allowedOrigins);
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log('❌ BLOQUEADO PELO CORS:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
   })
 );
-
 
 // * routes
 app.use('/', router);
